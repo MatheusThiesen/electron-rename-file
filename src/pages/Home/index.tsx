@@ -1,7 +1,5 @@
-// import { ipcRenderer, contextBridge } from 'electron'
 import React, { useState, useEffect } from 'react'
 import filesize from 'filesize'
-// import xlsx from 'xlsx'
 
 import { FiLogIn } from 'react-icons/fi'
 import { IoMdTrash, IoMdAlert } from 'react-icons/io'
@@ -31,6 +29,12 @@ function Home() {
     destinyFolderPath: false,
     file: false,
   })
+
+  useEffect(() => {
+    if (file) {
+      setDataRenameError({ ...dataRenameError, file: false })
+    }
+  }, [file])
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.name === 'genereteFolderPath') {
@@ -218,7 +222,7 @@ function Home() {
           />
           {dataRenameError.file && (
             <ErrorDropzone>
-              <IoMdAlert />
+              <IoMdAlert color="#d93025" size={22} />
               <span>Arquivo é obrigatório</span>
             </ErrorDropzone>
           )}

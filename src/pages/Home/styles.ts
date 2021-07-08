@@ -194,7 +194,7 @@ export const ContainerDropZone = styled.div`
 `
 
 export const ContainerPreviews = styled.ul`
-  margin-top: 25px;
+  margin-top: 10px;
   width: 100%;
 
   display: flex;
@@ -258,6 +258,9 @@ export const ErrorDropzone = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-
   margin-top: 10px;
+
+  span {
+    margin-left: 4px;
+  }
 `
