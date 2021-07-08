@@ -1,4 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
+import path from 'path'
+import { alterFiles } from './ipc/alterFiles'
+import { generateFile } from './ipc/generateFile'
 
 let mainWindow: BrowserWindow | null
 
@@ -10,17 +13,17 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 //     ? process.resourcesPath
 //     : app.getAppPath()
 
-function createWindow () {
+function createWindow() {
   mainWindow = new BrowserWindow({
-    // icon: path.join(assetsPath, 'assets', 'icon.png'),
+    icon: path.join('assets', 'icon.png'),
     width: 1100,
     height: 700,
     backgroundColor: '#191622',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
-    }
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
@@ -30,16 +33,28 @@ function createWindow () {
   })
 }
 
-async function registerListeners () {
+async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
   ipcMain.on('message', (_, message) => {
     console.log(message)
   })
+
+  ipcMain.on('alter-files', (_, props) => {
+    alterFiles(props)
+      .then(() => console.log('Alterado'))
+      .catch(e => console.log(e))
+  })
+  ipcMain.on('generate-file', (_, props) => {
+    generateFile(props)
+      .then(() => console.log('Gerado'))
+      .catch(e => console.log(e))
+  })
 }
 
-app.on('ready', createWindow)
+app
+  .on('ready', createWindow)
   .whenReady()
   .then(registerListeners)
   .catch(e => console.error(e))

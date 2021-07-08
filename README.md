@@ -1,6 +1,6 @@
 ## Electron + TypeScript + React
 
-Boilerplate for a project using Electron, React and Typescript.
+Multiple file changer
 
 ## Installation
 
@@ -29,7 +29,3 @@ yarn package
 ## Contributing
 
 Pull requests are always welcome 😃.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)

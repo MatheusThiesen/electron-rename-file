@@ -1,4 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import * as alterFiles from './ipc/alterFiles'
+import * as generateFile from './ipc/generateFile'
 
 export const api = {
   /**
@@ -9,8 +11,15 @@ export const api = {
    * The function below can accessed using `window.Main.sayHello`
    */
 
-  sendMessage: (message: string) => { 
+  sendMessage: (message: string) => {
     ipcRenderer.send('message', message)
+  },
+
+  alterFiles: (props: alterFiles.Props) => {
+    ipcRenderer.send('alter-files', props)
+  },
+  generateFile: (props: generateFile.Props) => {
+    ipcRenderer.send('generate-file', props)
   },
 
   /**
@@ -18,7 +27,7 @@ export const api = {
    */
   on: (channel: string, callback: Function) => {
     ipcRenderer.on(channel, (_, data) => callback(data))
-  }
+  },
 }
 
 contextBridge.exposeInMainWorld('Main', api)
