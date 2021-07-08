@@ -1,3 +1,4 @@
+import { shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import xlsx from 'xlsx'
@@ -14,7 +15,7 @@ export interface Props {
   folderPath: string
   folderName: string
   folderDestiny: string
-  listChanges: listChanges[]
+  // listChanges: listChanges[]
 }
 
 function xlsxToJson(pathXlsx: string) {
@@ -35,19 +36,31 @@ export async function alterFiles(props: Props) {
     if (err) throw err
     //Criar uma pasta para copiar arquivos renomeados
     fs.mkdir(path.resolve(folderDestiny, folderName), () => {})
+    //Caminho da pasta
+    const pathDestiny = path.resolve(folderDestiny, folderName)
 
     //Percorre a todos arquivos da pasta
     for (const file of files) {
       //Filtra o arquivo conforme lista de alterações
       const selectFile = listChanges.filter(item => item.atual_nome === file)
       //Se exister realiza a copia renomenando o arquivo
-      if (selectFile[0]) {
-        fs.copyFile(
-          path.resolve(folderPath, file),
-          path.resolve(folderDestiny, folderName, selectFile[0].novo_nome),
-          () => {}
-        )
+      if (
+        selectFile[0] &&
+        selectFile[0].novo_nome &&
+        selectFile[0].novo_nome !== undefined &&
+        selectFile[0].novo_nome !== ''
+      ) {
+        fs.promises
+          .copyFile(
+            path.resolve(folderPath, file),
+            path.resolve(pathDestiny, selectFile[0].novo_nome)
+          )
+          .then()
       }
     }
+
+    setTimeout(() => {
+      shell.openPath(pathDestiny)
+    }, 1000)
   })
 }

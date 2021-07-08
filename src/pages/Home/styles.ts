@@ -253,3 +253,11 @@ export const ContainerPreviews = styled.ul`
     }
   }
 `
+
+export const ErrorDropzone = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  margin-top: 10px;
+`

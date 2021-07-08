@@ -4,7 +4,7 @@ import filesize from 'filesize'
 // import xlsx from 'xlsx'
 
 import { FiLogIn } from 'react-icons/fi'
-import { IoMdTrash } from 'react-icons/io'
+import { IoMdTrash, IoMdAlert } from 'react-icons/io'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { FaFileDownload } from 'react-icons/fa'
 import {
@@ -13,70 +13,120 @@ import {
   Button,
   ContainerDropZone,
   ContainerPreviews,
+  ErrorDropzone,
 } from './styles'
 import Dropzone from '../../components/Dropzone'
 
 function Home() {
   const [genereteFolderPath, setGenereteFolderPath] = useState('')
+  const [dataGenereteError, setDataGenereteError] = useState({
+    genereteFolderPath: false,
+  })
+
   const [renameFolderPath, setRenameFolderPath] = useState('')
   const [destinyFolderPath, setDestinyFolderPath] = useState('')
-  const [selectFile, setSelectFile] = useState<File>()
-  const [files, setFiles] = useState<File | undefined>()
-
-  useEffect(() => {
-    if (selectFile) setFiles(selectFile)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectFile])
+  const [file, setFile] = useState<File | undefined>()
+  const [dataRenameError, setDataRenameError] = useState({
+    renameFolderPath: false,
+    destinyFolderPath: false,
+    file: false,
+  })
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.name === 'genereteFolderPath') {
       setGenereteFolderPath(event.target.value)
+      setDataGenereteError({
+        ...dataGenereteError,
+        genereteFolderPath: false,
+      })
     }
 
     if (event.target.name === 'renameFolderPath') {
       setRenameFolderPath(event.target.value)
+      setDataRenameError({
+        ...dataRenameError,
+        renameFolderPath: false,
+      })
     }
     if (event.target.name === 'destinyFolderPath') {
       setDestinyFolderPath(event.target.value)
+      setDataRenameError({
+        ...dataRenameError,
+        destinyFolderPath: false,
+      })
     }
+  }
+
+  function verifyErrorGenerate() {
+    if (genereteFolderPath === '') {
+      setDataGenereteError({
+        ...dataGenereteError,
+        genereteFolderPath: true,
+      })
+    }
+  }
+  function verifyErrorRename() {
+    var dataError = {}
+    if (renameFolderPath === '') {
+      dataError = { ...dataError, renameFolderPath: true }
+    }
+
+    if (!file) {
+      dataError = { ...dataError, file: true }
+    }
+
+    if (destinyFolderPath === '') {
+      dataError = { ...dataError, destinyFolderPath: true }
+    }
+
+    setDataRenameError({ ...dataRenameError, ...dataError })
   }
 
   function onSubmitRename(e: React.FormEvent) {
     e.preventDefault()
 
-    if (selectFile) {
+    verifyErrorRename()
+    console.log(dataRenameError)
+
+    if (file && renameFolderPath && destinyFolderPath) {
       window.Main.alterFiles({
         folderPath: renameFolderPath,
         folderDestiny: destinyFolderPath,
-        folderXlsx: selectFile.path,
+        folderXlsx: file.path,
         folderName: 'Renomeadas',
-        listChanges: [
-          {
-            newName: 'test.jpg',
-            oldName: '145_01.jpg',
-          },
-        ],
       })
     }
   }
   function onSubmitGenerate(e: React.FormEvent) {
     e.preventDefault()
 
-    window.Main.generateFile({
-      folderPath: genereteFolderPath,
-    })
+    verifyErrorGenerate()
+
+    if (genereteFolderPath) {
+      window.Main.generateFile({
+        folderPath: genereteFolderPath,
+      })
+    }
   }
 
   return (
     <Container>
       <Form onSubmit={onSubmitGenerate}>
-        <h3>Gerar arquivo</h3>
+        <h3>Gerar listagem de arquivos</h3>
         <div className="field">
           <input
             type="text"
             name="genereteFolderPath"
-            // className={error.codForm ? 'error-input' : ''}
+            className={
+              dataGenereteError.genereteFolderPath ? 'error-input' : ''
+            }
             onChange={onChange}
+            onClick={() =>
+              setDataGenereteError({
+                ...dataGenereteError,
+                genereteFolderPath: false,
+              })
+            }
             value={genereteFolderPath}
           />
           <label
@@ -86,11 +136,11 @@ function Home() {
             Caminho da pasta
           </label>
 
-          {/* {error.codForm && (
-                <div className="error-icon">
-                  <IoMdAlert />
-                </div>
-              )} */}
+          {dataGenereteError.genereteFolderPath && (
+            <div className="error-icon">
+              <IoMdAlert />
+            </div>
+          )}
         </div>
 
         <Button type="submit">
@@ -107,7 +157,13 @@ function Home() {
           <input
             type="text"
             name="renameFolderPath"
-            // className={error.codForm ? 'error-input' : ''}
+            className={dataRenameError.renameFolderPath ? 'error-input' : ''}
+            onClick={() =>
+              setDataRenameError({
+                ...dataRenameError,
+                renameFolderPath: false,
+              })
+            }
             onChange={onChange}
             value={renameFolderPath}
           />
@@ -118,17 +174,23 @@ function Home() {
             Caminho da pasta
           </label>
 
-          {/* {error.codForm && (
-                <div className="error-icon">
-                  <IoMdAlert />
-                </div>
-              )} */}
+          {dataRenameError.renameFolderPath && (
+            <div className="error-icon">
+              <IoMdAlert />
+            </div>
+          )}
         </div>
         <div className="field">
           <input
             type="text"
             name="destinyFolderPath"
-            // className={error.codForm ? 'error-input' : ''}
+            className={dataRenameError.destinyFolderPath ? 'error-input' : ''}
+            onClick={() =>
+              setDataRenameError({
+                ...dataRenameError,
+                destinyFolderPath: false,
+              })
+            }
             onChange={onChange}
             value={destinyFolderPath}
           />
@@ -139,11 +201,11 @@ function Home() {
             Destino dos arquivos
           </label>
 
-          {/* {error.codForm && (
-                <div className="error-icon">
-                  <IoMdAlert />
-                </div>
-              )} */}
+          {dataRenameError.destinyFolderPath && (
+            <div className="error-icon">
+              <IoMdAlert />
+            </div>
+          )}
         </div>
 
         <ContainerDropZone>
@@ -152,22 +214,29 @@ function Home() {
               'application/vnd.ms-excel',
               'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]}
-            onFileUploaded={setSelectFile}
+            onFileUploaded={setFile}
           />
+          {dataRenameError.file && (
+            <ErrorDropzone>
+              <IoMdAlert />
+              <span>Arquivo é obrigatório</span>
+            </ErrorDropzone>
+          )}
+
           <ContainerPreviews>
-            {files && (
-              <li key={`${files.name}`}>
+            {file && (
+              <li key={`${file.name}`}>
                 <RiFileExcel2Fill size={60} color="#185C37" />
                 <div className="fileInfo">
                   <div>
-                    <strong>{files.name}</strong>
-                    <span>{filesize(files.size)}</span>
+                    <strong>{file.name}</strong>
+                    <span>{filesize(file.size)}</span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => {
-                      setFiles(undefined)
+                      setFile(undefined)
                     }}
                   >
                     <IoMdTrash size={30} />
