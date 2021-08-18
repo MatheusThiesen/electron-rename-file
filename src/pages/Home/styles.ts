@@ -1,17 +1,40 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-  h1 {
-    margin-bottom: 2rem;
-  }
-
+  width: 100vw;
   height: 100vh;
+  /* overflow: hidden; */
+  overflow-y: auto;
+`
+
+export const Content = styled.div`
+  width: 100%;
+  height: 100vh;
+  /* overflow-y: scroll; */
+
   padding: 25px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 20px;
+
+  h1 {
+    margin-bottom: 2rem;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #4d4d57;
+  }
 
   @media (max-width: 900px) {
     flex-direction: column;

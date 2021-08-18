@@ -7,6 +7,21 @@ export const GlobalStyle = createGlobalStyle`
     outline: 0 !important;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
+
+    ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #4D4D57;
+    
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    /* background: #121214; */
+    background: #191622;
+  }
   }
 
   body {
