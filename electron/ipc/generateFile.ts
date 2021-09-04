@@ -1,4 +1,5 @@
-import { shell } from 'electron'
+import { mainWindow } from '../main'
+import { shell, dialog } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import xlsx from 'xlsx'
@@ -11,6 +12,7 @@ export interface listChanges {
 export interface listChangesClient {
   atual_nome: string
   novo_nome: string
+  deletar: string
 }
 
 export interface Props {
@@ -22,9 +24,9 @@ export async function generateFile(props: Props) {
   const { folderPath } = props
 
   fs.readdir(path.resolve(folderPath), async (err, files) => {
-    //Se ocorrer erro ele reclama
+    // Se ocorrer erro ele reclama
     if (err) throw err
-    var normalized: listChangesClient[] = []
+    const normalized: listChangesClient[] = []
     for (const file of files) {
       if (file) {
         const stat = await fs.promises.stat(path.resolve(folderPath, file))
@@ -33,22 +35,34 @@ export async function generateFile(props: Props) {
           normalized.push({
             atual_nome: file,
             novo_nome: '',
+            deletar: '',
           })
         }
       }
     }
 
-    const nameFile = `Listagem-dos-arquivos.xlsx`
+    const resultFilePath = dialog.showSaveDialogSync(
+      mainWindow as Electron.BrowserWindow,
+      {
+        filters: [{ name: '', extensions: ['xls'] }],
+      }
+    )
 
-    let newFile = xlsx.utils.book_new()
-    let newAba = xlsx.utils.json_to_sheet(normalized)
+    const newFile = xlsx.utils.book_new()
+    const newAba = xlsx.utils.json_to_sheet(normalized)
     xlsx.utils.book_append_sheet(newFile, newAba, 'Plan1')
 
-    const pathFileCreate = path.resolve(folderPath, 'Arquivo', nameFile)
-    fs.mkdir(path.resolve(folderPath, 'Arquivo'), () => {})
-    xlsx.writeFile(newFile, pathFileCreate)
-    setTimeout(() => {
-      shell.showItemInFolder(pathFileCreate)
-    }, 1000)
+    if (resultFilePath !== undefined) {
+      const split = resultFilePath.split('.')
+      const nameFile =
+        split[split.length - 1].toUpperCase() !== 'XLS'
+          ? resultFilePath + '.xls'
+          : resultFilePath
+
+      xlsx.writeFile(newFile, nameFile)
+      setTimeout(() => {
+        shell.showItemInFolder(nameFile)
+      }, 1000)
+    }
   })
 }

@@ -3,18 +3,16 @@ import styled from 'styled-components'
 export const Container = styled.div`
   width: 100vw;
   height: 100vh;
-  padding: 25px;
-
+  /* overflow: hidden; */
   overflow-y: auto;
-
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; */
 `
 
 export const Content = styled.div`
   width: 100%;
+  height: 100vh;
+  /* overflow-y: scroll; */
+
+  padding: 25px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,7 +21,6 @@ export const Content = styled.div`
 
   h1 {
     margin-bottom: 2rem;
-    color: ${props => props.theme.colors.text};
   }
 
   ::-webkit-scrollbar {
@@ -134,7 +131,7 @@ export const Form = styled.form`
       z-index: 10;
 
       input:focus {
-        border: 2px solid #${props => props.theme.colors.primary};
+        border: 2px solid #d93025;
       }
     }
 

@@ -1,55 +1,11 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  padding: 25px;
-
-  overflow-y: auto;
-
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; */
-`
-
-export const Content = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-
-  h1 {
-    margin-bottom: 2rem;
-    color: ${props => props.theme.colors.text};
-  }
-
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #333;
-    width: 4px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #4d4d57;
-  }
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
-`
-
 export const Form = styled.form`
   width: 100%;
   padding: 10px;
   border-radius: 6px;
 
-  max-width: 700px;
+  max-width: 750px;
 
   display: flex;
   flex-direction: column;
@@ -85,6 +41,18 @@ export const Form = styled.form`
       color: #fff;
       font-size: ${props => props.theme.sizes.normalFontSize};
       transition: 0.2s;
+    }
+
+    & > button[type='button'] {
+      right: 1rem;
+      top: 0.7rem;
+      position: absolute;
+      z-index: 2;
+
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      font-size: 1.5rem;
     }
 
     input {
@@ -134,7 +102,7 @@ export const Form = styled.form`
       z-index: 10;
 
       input:focus {
-        border: 2px solid #${props => props.theme.colors.primary};
+        border: 2px solid #d93025;
       }
     }
 

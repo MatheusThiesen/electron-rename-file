@@ -2,8 +2,10 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import { alterFiles } from './ipc/alterFiles'
 import { generateFile } from './ipc/generateFile'
+import { deleteFiles } from './ipc/deleteFiles'
+import { selectDirectory } from './ipc/selectDirectory'
 
-let mainWindow: BrowserWindow | null
+export let mainWindow: BrowserWindow | null
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -16,10 +18,10 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 function createWindow() {
   mainWindow = new BrowserWindow({
     icon: path.join('assets', 'icon.png'),
-    width: 1100,
-    height: 600,
+    width: 750,
+    height: 535,
     minWidth: 600,
-    minHeight: 400,
+    minHeight: 535,
     // frame: false,
     transparent: true,
     backgroundColor: '#191622',
@@ -45,6 +47,11 @@ async function registerListeners() {
     console.log(message)
   })
 
+  ipcMain.on('select-directory', async event => {
+    const result = await selectDirectory()
+    event.reply('selected-directory', result.filePaths[0])
+  })
+
   ipcMain.on('alter-files', (_, props) => {
     alterFiles(props)
       .then(() => console.log('Alterado'))
@@ -52,6 +59,11 @@ async function registerListeners() {
   })
   ipcMain.on('generate-file', (_, props) => {
     generateFile(props)
+      .then(() => console.log('Gerado'))
+      .catch(e => console.log(e))
+  })
+  ipcMain.on('delete-files', (_, props) => {
+    deleteFiles(props)
       .then(() => console.log('Gerado'))
       .catch(e => console.log(e))
   })
